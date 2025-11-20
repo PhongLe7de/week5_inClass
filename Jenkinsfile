@@ -6,7 +6,6 @@ pipeline {
     }
 
     environment {
-        PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;${env.PATH}"
         SONARQUBE_SERVER = 'SonarQubeServer'
         SONAR_TOKEN = 'sqa_72be9133b5fb18a5367107a4c1519a808d8e9112'
         DOCKERHUB_CREDENTIALS_ID = 'Docker_Hub'
