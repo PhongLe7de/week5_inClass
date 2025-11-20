@@ -41,20 +41,14 @@ pipeline {
                 }
             }
         }
-
         stage('Build Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker_hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
-                        # create temporary docker config folder
-                        mkdir -p /tmp/docker-config
-
-                        # write auth to config.json (base64 encoded username:password)
-                        echo "{\\"auths\\":{\\"https://index.docker.io/v1/\\":{\\"auth\\":\\"$(echo -n $DOCKER_USER:$DOCKER_PASS | base64)\\"}}}" > /tmp/docker-config/config.json
-
-                        # set DOCKER_CONFIG to the temp folder and build the image
-                        DOCKER_CONFIG=/tmp/docker-config /usr/local/bin/docker build -t $DOCKER_IMAGE:$DOCKER_TAG .
-                    '''
+                script {
+                    if (isUnix()) {
+                        sh "/usr/local/bin/docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    } else {
+                        bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    }
                 }
             }
         }
