@@ -6,11 +6,12 @@ pipeline {
     }
 
     environment {
+        PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;${env.PATH}"
         SONARQUBE_SERVER = 'SonarQubeServer'
         SONAR_TOKEN = 'sqa_72be9133b5fb18a5367107a4c1519a808d8e9112'
         DOCKERHUB_CREDENTIALS_ID = 'Docker_Hub'
-        DOCKERHUB_REPO = 'phongle7de/sep2_inclass_assignment'
-        DOCKER_IMAGE_TAG = 'latest'
+        DOCKER_IMAGE = 'phongle7de/sep2_inclass_assignment'
+        DOCKER_TAG = 'latest'
     }
 
     stages {
@@ -44,20 +45,23 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh "/usr/local/bin/docker build -t ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG} ."
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh """
-                    /usr/local/bin/docker login -u $DOCKER_USER -p $DOCKER_PASS
-                    /usr/local/bin/docker push ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
-                    """
+                script {
+                    if (isUnix()) {
+                        sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    } else {
+                        bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    }
                 }
             }
         }
 
-    }
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', env.DOCKERHUB_CREDENTIALS_ID) {
+                        docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
+                    }
+                }
+            }
+        }
 }
