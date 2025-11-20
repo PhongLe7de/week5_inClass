@@ -8,7 +8,7 @@ pipeline {
     environment {
         SONARQUBE_SERVER = 'SonarQubeServer'
         SONAR_TOKEN = 'sqa_72be9133b5fb18a5367107a4c1519a808d8e9112'
-        DOCKERHUB_CREDENTIALS_ID = 'Docker_Hub'
+        DOCKERHUB_CREDENTIALS_ID = 'docker_hub'
         DOCKER_IMAGE = 'phongle7de/sep2_inclass_assignment'
         DOCKER_TAG = 'latest'
     }
