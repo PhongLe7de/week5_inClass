@@ -7,7 +7,7 @@ import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AppTest2 {
+class AppTest {
     @Test
     void testPrintNumbers() {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
